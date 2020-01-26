@@ -1,0 +1,29 @@
+{
+  "name": "mixify",
+  "version": "1.0.0",
+  "description": "modern JS project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gufufu/mixify.git"
+  },
+  "keywords": [
+    "node",
+    "npm",
+    "webpack",
+    "babel",
+    "JavaScript"
+  ],
+  "author": "vm.dev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gufufu/mixify/issues"
+  },
+  "homepage": "https://github.com/gufufu/mixify#readme",
+  "dependencies": {
+    "webpack": "^4.41.5"
+  }
+}
