@@ -11,6 +11,14 @@ export const clearResults = () =>  {
     elements.searchResultPages.innerHTML = '';
 }
 
+export const highlightSelected = id => {
+    const resultsArr = Array.from(document.querySelectorAll('.results__link'));
+    resultsArr.forEach(el => {
+        el.classList.remove('results__link--active');
+    });
+    document.querySelector(`a[href="#${id}"]`).classList.add('results__link--active');
+};
+
 const limitDrinkTitle = (strDrink, limit = 17) => {
     const newTitle = [];
     if (strDrink.length > limit) {
@@ -42,7 +50,7 @@ const renderRecipe = drinks => {
                     </li>
                 `
     elements.searchResultList.insertAdjacentHTML('afterbegin', markup);
-    console.log('- searchView.js - renderRecipe - ')
+    //console.log('- searchView.js - renderRecipe - ')
 };
 
 // Create pages Buttons
@@ -87,11 +95,11 @@ export const renderResults = (drinks, page = 1, resPerPage = 9) =>  {
     const end = page * resPerPage;
 
     drinks.slice(start, end).forEach(renderRecipe);
-    console.log(`- searchView.js - renderResults - `)
+    //console.log(`- searchView.js - renderResults - `)
 
     // Render pagination buttons
     renderButtons(page, drinks.length, resPerPage);
 
 };
 
-    console.log(`- searchView.js - Page -`)
+    //console.log(`- searchView.js - Page -`)
