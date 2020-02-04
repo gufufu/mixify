@@ -14,12 +14,9 @@ export default class Recipe {
             const ingList = [resArray.strIngredient1, resArray.strIngredient2, resArray.strIngredient3, resArray.strIngredient4, resArray.strIngredient5, resArray.strIngredient6, resArray.strIngredient7, resArray.strIngredient8, resArray.strIngredient9, resArray.strIngredient10].filter(item => item !== undefined && item !== null);
             const measuresList = [resArray.strMeasure1, resArray.strMeasure2, resArray.strMeasure3, resArray.strMeasure4, resArray.strMeasure5, resArray.strMeasure6, resArray.strMeasure7, resArray.strMeasure8, resArray.strMeasure9, resArray.strMeasure10].filter(item => item !== undefined && item !== null);
             
-            const arrayMeasuresList = [resArray.strMeasure1, resArray.strMeasure2, resArray.strMeasure3, resArray.strMeasure4, resArray.strMeasure5, resArray.strMeasure6, resArray.strMeasure7, resArray.strMeasure8, resArray.strMeasure9, resArray.strMeasure10]
+            const arrayMeasuresList = [resArray.strMeasure1, resArray.strMeasure2, resArray.strMeasure3, resArray.strMeasure4, resArray.strMeasure5, resArray.strMeasure6, resArray.strMeasure7, resArray.strMeasure8, resArray.strMeasure9, resArray.strMeasure10]//.join().replace(/(\r\n|\n|\r)/gm, "").replace(/,/g, '')
 
-            //console.log(arrayMeasuresList )
-
-            const regEx = arrayMeasuresList.join().split(/[\r\n|\r|\n|" "]+/);
-            console.log(regEx)
+           console.log(arrayMeasuresList )
 
             this.title = resArray.strDrink;
             this.alcoholic = resArray.strAlcoholic;
@@ -29,25 +26,39 @@ export default class Recipe {
             this.ingredientsFile = ingList;
             this.measuresFile = measuresList;
             
-            for (var i = 0; i < this.ingredientsFile.length; i++)
-            if (arrayMeasuresList[i] == null)
-            arrayMeasuresList[i] = '1 portion ';
-            const filtered = arrayMeasuresList.filter(item => item !== undefined && item !== null);
-            //console.log(filtered)
-            this.filteredMeasuresList = filtered;
+            for (var i = 0; i < this.ingredientsFile.length; i++) 
+                if (arrayMeasuresList[i] == null) {
+                    arrayMeasuresList[i] = '1 portion '
+                    //console.log(arrayMeasuresList[i])
+                } else if(arrayMeasuresList[i].includes('Juice')) {
+                    arrayMeasuresList[i] = '1 portion Juice of'
+                    //console.log(arrayMeasuresList[i].indexOf('Juice') !== 1)
+                } else if(arrayMeasuresList[i].includes('Fill with') || arrayMeasuresList[i].includes('Fill to ')) {
+                    arrayMeasuresList[i] = '1 Fill with'
+                } else if(arrayMeasuresList[i].includes('Add 10 oz')) {
+                    arrayMeasuresList[i] = '10 oz'
+                } else if(arrayMeasuresList[i].includes('cubes')) {
+                    arrayMeasuresList[i] = '1 portion'
+                } else if(arrayMeasuresList[i].includes('top up')) {
+                    arrayMeasuresList[i] = '1 top up'
+                } else if(arrayMeasuresList[i].includes('Garnish')) {
+                    arrayMeasuresList[i] = '1 Garnish'
+                    //console.log(arrayMeasuresList[i].indexOf('Add') !== 1)
+                } else if(arrayMeasuresList[i].includes('Around rim')) {
+                    arrayMeasuresList[i] = '1 pinch'
+                } else if(arrayMeasuresList[i].includes('Mint')) {
+                    arrayMeasuresList[i] = 'leaf Mint'
+                }
 
-            const c = filtered.map(function(e, i){
+            this.filteredArrayMeasuresList = arrayMeasuresList.filter(item => item !== undefined && item !== null);
+                
+            const c = this.filteredArrayMeasuresList.map(function(e, i){
                 return [e, ingList[i]];
             });
-            //console.log(c)
             
-
-            const d = c.join().split(/,(?=\s*\d+)/);
-            console.log(d)
-
+            const d = c.join().match(/[^,]+,[^,]+/g)
             this.finalList = d;
-            
-
+           // console.log(this.finalList)
         } catch (error) {
             alert('OOOPS something went wrong with this mixing!');
         }
@@ -63,34 +74,36 @@ export default class Recipe {
     };
     // Calculate Amounts needed based on number of servings
     calcServings() {
-        this.servings = 2;
+        this.servings = 1;
         //console.log(this.servings)
     }
 
     // Method - new array with the Measures
     parseIngredientAmounts() {
-        const unitsLong =['parts', 'teaspoon', 'teaspoons', 'tblsp', 'tablespoons', 'tablespoon', 'ounces', 'ounce', 'cups', 'pounds', 'dashes', 'dash', 'fifth', 'L', 'l', 'small bottle', 'pint', 'cl', 'mlts', 'clts', 'tsts', 'altse', 'sltsice', 'Mapltse'];//TODO check this List - hack
-        const unitsShort = ['parts', 'tsp', 'tsps', 'tbsps', 'tbsps', 'tbsp', 'oz', 'oz', 'cup', 'pound', 'dash', 'dash', '1/5', 'lts', 'lts', 'sm btl', 'pint', 'cl', 'ml', 'cl', '', 'ale', 'slice', 'Maple'];
-        const units = [...unitsShort, 'kg', 'g', 'cl'];
+        const unitsLong =['oz', 'dashes', 'portion', 'shots', 'shot', 'Slice', 'tsp', 'tblsp', 'jiggers', 'jigger', 'pinch', 'Fill', 'drop'];
+        const unitsShort = ['oz', 'dash', 'portion', 'shots', 'shot', 'slice', 'tsp', 'tbsp', 'jiggers', 'jigger', 'pinch', 'fill', 'drop'];
+        //const units = [...unitsShort, 'kg', 'g', 'cl'];
 
-        //console.log(this.finalList)
-        //console.log(this.filteredMeasuresList)
 
         const newIngredientAmounts = this.finalList.map(el => {
+           //console.log(this.finalList)
             // 1 Uniformize all units
-            let newIng = el;
+            let newIng = el.charAt(0).toUpperCase() + el.slice(1)
             unitsLong.forEach((unit, i) => {
-                newIng = newIng.replace(unit, units[i]);
+                newIng = newIng.replace(unit, unitsShort[i]);
             });
 
             // 2 Remove commas
-            newIng = newIng.replace(/\,/g,' - ');
-            //console.log(newIng)
+            newIng = newIng.replace(/\,/g,' ');
             
+           // console.log(newIng)
+
+
             // 3 Parse ingredients into count, unit and ingredientes
             const arrMeasures = newIng.split(' ');
-            const unitIndex = arrMeasures.findIndex(el2 => units.includes(el2));
             //console.log(arrMeasures)
+            const unitIndex = arrMeasures.findIndex(el2 => unitsShort.includes(el2));
+            
             let objMeasures;
             if (unitIndex > -1) {
 
@@ -130,19 +143,19 @@ export default class Recipe {
             return objMeasures;
         });
         this.ingredientAmounts = newIngredientAmounts;
+        //console.log(this.ingredientAmounts)
     }
-
+    
     // Search all items that finish with number and add them to an array without the numbers
     updateServings (type) {
         //Servings
         const newServings = type === 'dec' ? this.servings - 1 : this.servings + 1;
         this.ingredientAmounts.forEach(ing => {
             ing.count *= (newServings / this.servings);
-            //console.log(this.servings)
+           // console.log(this.servings)
         });
         //Ingredients
         this.servings = newServings;
-        console.log(this.servings)
     };
     
 };

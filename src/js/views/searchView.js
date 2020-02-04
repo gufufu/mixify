@@ -16,10 +16,10 @@ export const highlightSelected = id => {
     resultsArr.forEach(el => {
         el.classList.remove('results__link--active');
     });
-    document.querySelector(`a[href="#${id}"]`).classList.add('results__link--active');
+    document.querySelector(`.results__link[href="#${id}"]`).classList.add('results__link--active');
 };
 
-const limitDrinkTitle = (strDrink, limit = 17) => {
+export const limitDrinkTitle = (strDrink, limit = 17) => {
     const newTitle = [];
     if (strDrink.length > limit) {
         strDrink.split(' ').reduce((acc, cur) => {
