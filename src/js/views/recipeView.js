@@ -107,13 +107,6 @@ export const renderRecipe = (recipe, isLiked) => {
         <p class="recipe__directions-text">
         <span class="recipe__by">Serving glass -</span> ${recipe.glass}
         </p>
-        <a class="btn-small recipe__btn" href="${recipe.instructions}" target="_blank">
-            <span>Directions</span>
-            <svg class="search__icon">
-                <use href="img/icons.svg#icon-triangle-right"></use>
-            </svg>
-
-        </a>
     </div>
     
 </div>
